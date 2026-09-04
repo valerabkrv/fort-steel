@@ -10,27 +10,81 @@ function priceHtml(m) {
   return '<span class="price">от ' + esc(m.price) + ' <small>' + esc(m.unit) + '</small></span>';
 }
 
-/* ---------- сетка карточек моделей ---------- */
-function modelCards(sectionId, models) {
-  return models.map(function (m) {
-    return '<a href="#' + sectionId + '-' + m.slug + '" class="series-card">' +
-      '<div class="img-wrap">' +
-        '<span class="fs-badge">Fort Steel</span>' +
-        '<img src="' + m.hero + '" alt="' + esc(m.name) + '" loading="lazy">' +
-      '</div>' +
-      '<div class="body">' +
-        '<h3>' + esc(m.name) + '</h3>' +
-        '<p>' + esc(m.short) + '</p>' +
-        '<div class="meta">' + priceHtml(m) +
-          '<span class="width">' + (m.work_width && m.work_width !== '—' ? 'раб. ' + esc(m.work_width) : '') + '</span>' +
-        '</div>' +
-      '</div>' +
-    '</a>';
+/* Цены из блока T123 (FS_PRICES) перекрывают цены из data.js.
+   Ключ — точное название модели; неизвестные ключи не молчат, а пишут
+   предупреждение в консоль, иначе опечатку в названии не заметить. */
+function applyPrices(map, unit, lists) {
+  if (!map) return;
+  var known = {};
+  lists.forEach(function (list) {
+    (list || []).forEach(function (m) {
+      known[m.name] = true;
+      if (Object.prototype.hasOwnProperty.call(map, m.name)) {
+        m.price = String(map[m.name]).trim();
+        if (unit) m.unit = unit;
+      }
+    });
+  });
+  Object.keys(map).forEach(function (k) {
+    if (!known[k]) console.warn('FS_PRICES: модель «' + k + '» не найдена — проверьте название');
+  });
+}
+
+/* Реестр моделей: ключ «раздел-slug» -> модель. Нужен для карточек и окна. */
+var MODEL_INDEX = {};
+
+function registerModels(sectionId, models, tag) {
+  models.forEach(function (m) {
+    MODEL_INDEX[sectionId + '-' + m.slug] = { m: m, tag: tag };
+  });
+}
+
+/* ---------- плитка модели ---------- */
+function modelTile(key, m, note) {
+  return '<a href="#' + key + '" class="model-tile" data-key="' + key + '">' +
+    '<span class="model-tile-media">' +
+      '<span class="fs-badge">Fort Steel</span>' +
+      '<img src="' + m.hero + '" alt="' + esc(m.name) + '" loading="lazy">' +
+      '<span class="model-tile-hint">Подробнее</span>' +
+    '</span>' +
+    '<span class="model-tile-body">' +
+      '<span class="model-tile-name">' + esc(m.name) + '</span>' +
+      '<span class="model-tile-short">' + esc(note || m.short) + '</span>' +
+      '<span class="model-tile-meta">' + priceHtml(m) +
+        '<span class="width">' + (m.work_width && m.work_width !== '—' ? 'раб. ' + esc(m.work_width) : '') + '</span>' +
+      '</span>' +
+    '</span>' +
+  '</a>';
+}
+
+function renderModels(sectionId, models, tag) {
+  var grid = document.getElementById(sectionId + '-grid');
+  if (!grid || !models || !models.length) return;
+  registerModels(sectionId, models, tag);
+  grid.innerHTML = models.map(function (m) {
+    return modelTile(sectionId + '-' + m.slug, m);
   }).join('');
 }
 
-/* ---------- развёрнутый блок модели ---------- */
-function modelBlock(sectionId, m, tag) {
+/* ---------- сайдинг для ограждений ---------- */
+function renderFence(elId, slugs, all) {
+  var el = document.getElementById(elId);
+  if (!el) return;
+  var byslug = {};
+  all.forEach(function (m) { byslug[m.slug] = m; });
+  el.innerHTML = slugs.map(function (s) {
+    var m = byslug[s];
+    if (!m) return '';
+    return modelTile('siding-' + m.slug, m, 'Применяется и как фасадный сайдинг, и для заполнения секций забора.');
+  }).join('');
+}
+
+/* ---------- содержимое окна модели ---------- */
+function modelDetailHtml(key) {
+  var rec = MODEL_INDEX[key];
+  if (!rec) return '';
+  var m = rec.m;
+
   var props = [
     ['Рабочая ширина', m.work_width],
     ['Ширина фактическая', m.full_width],
@@ -44,17 +98,26 @@ function modelBlock(sectionId, m, tag) {
     return '<div><span class="k">' + p[0] + '</span><span class="v">' + esc(p[1]) + '</span></div>';
   }).join('');
 
-  return '<div class="collection-block" id="' + sectionId + '-' + m.slug + '">' +
-    '<div class="collection-head">' +
+  var shots = [m.hero].concat(m.gallery || []).filter(function (src, i, arr) {
+    return src && arr.indexOf(src) === i;
+  }).slice(0, 10);
+
+  var thumbs = shots.length < 2 ? '' : '<div class="model-thumbs">' + shots.map(function (src, i) {
+    return '<button type="button" class="model-thumb' + (i === 0 ? ' is-active' : '') + '" data-img="' + src + '">' +
+      '<img src="' + src + '" alt="' + esc(m.name) + ' — фото ' + (i + 1) + '" loading="lazy"></button>';
+  }).join('') + '</div>';
+
+  return '<div class="collection-head">' +
       '<div class="collection-hero-col">' +
         '<div class="collection-hero">' +
           '<span class="fs-badge">Fort Steel</span>' +
-          '<img id="hero-' + sectionId + '-' + m.slug + '" src="' + m.hero + '" alt="' + esc(m.name) + '">' +
+          '<img class="model-modal-photo" src="' + shots[0] + '" alt="' + esc(m.name) + '">' +
         '</div>' +
-        '<a href="#contacts" class="btn">Узнать цену и наличие</a>' +
+        thumbs +
+        '<a href="#contacts" class="btn">Купить</a>' +
       '</div>' +
       '<div class="collection-head-text">' +
-        '<span class="collection-tag">' + esc(tag) + '</span>' +
+        '<span class="collection-tag">' + esc(rec.tag) + '</span>' +
         '<div class="collection-title-row">' +
           '<h3 class="section-title collection-title" style="font-size:22px">' + esc(m.name) + '</h3>' +
           (m.price && m.price !== '—'
@@ -65,16 +128,119 @@ function modelBlock(sectionId, m, tag) {
         '<div class="model-props">' + propsHtml + '</div>' +
         '<p class="model-note">' + esc(m.extra) + '</p>' +
       '</div>' +
-    '</div>' +
-  '</div>';
+    '</div>';
 }
 
-function renderModels(sectionId, models, tag) {
-  var grid = document.getElementById(sectionId + '-grid');
-  var blocks = document.getElementById(sectionId + '-blocks');
-  if (!grid || !blocks || !models || !models.length) return;
-  grid.innerHTML = modelCards(sectionId, models);
-  blocks.innerHTML = models.map(function (m) { return modelBlock(sectionId, m, tag); }).join('');
+/* ---------- окно модели ---------- */
+var MODAL = null;          // корневой элемент окна
+var MODAL_PUSHED = false;  // добавляли ли мы запись в историю
+var MODAL_SCROLL = null;   // сохранённые inline-стили overflow
+
+function modalRoot() {
+  if (MODAL) return MODAL;
+  var host = document.querySelector('.fs') || document.body;
+  MODAL = document.createElement('div');
+  MODAL.className = 'model-modal';
+  MODAL.setAttribute('role', 'dialog');
+  MODAL.setAttribute('aria-modal', 'true');
+  MODAL.innerHTML =
+    '<div class="model-modal-backdrop" data-close="1"></div>' +
+    '<div class="model-modal-dialog">' +
+      '<button type="button" class="model-modal-close" data-close="1" aria-label="Закрыть">&times;</button>' +
+      '<div class="model-modal-body"></div>' +
+    '</div>';
+  host.appendChild(MODAL);
+
+  MODAL.addEventListener('click', function (e) {
+    var t = e.target;
+    if (t.getAttribute && t.getAttribute('data-close')) { e.preventDefault(); closeModel(); return; }
+
+    var thumb = t.closest ? t.closest('.model-thumb') : null;
+    if (thumb) {
+      var photo = MODAL.querySelector('.model-modal-photo');
+      if (photo) photo.src = thumb.getAttribute('data-img');
+      Array.prototype.forEach.call(MODAL.querySelectorAll('.model-thumb'), function (x) {
+        x.classList.remove('is-active');
+      });
+      thumb.classList.add('is-active');
+      return;
+    }
+
+    var cta = t.closest ? t.closest('a[href="#contacts"]') : null;
+    if (cta) {
+      e.preventDefault();
+      /* историю правим сами: history.back() восстановил бы прокрутку
+         и отменил переход к контактам */
+      MODAL_PUSHED = false;
+      try { history.replaceState(null, '', location.pathname + location.search); } catch (err) {}
+      closeModel(true);
+      var c = document.getElementById('contacts');
+      if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+
+  return MODAL;
+}
+
+function openModel(key, push) {
+  if (!MODEL_INDEX[key]) return;
+  var el = modalRoot();
+  el.querySelector('.model-modal-body').innerHTML = modelDetailHtml(key);
+  el.classList.add('is-open');
+  el.scrollTop = 0;
+
+  if (MODAL_SCROLL === null) {
+    MODAL_SCROLL = [document.documentElement.style.overflow, document.body.style.overflow];
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+  if (push) {
+    try { history.pushState({ fsModel: key }, '', '#' + key); MODAL_PUSHED = true; } catch (err) {}
+  }
+  var close = el.querySelector('.model-modal-close');
+  if (close) close.focus();
+}
+
+function closeModel(fromHistory) {
+  if (!MODAL || !MODAL.classList.contains('is-open')) return;
+  MODAL.classList.remove('is-open');
+  MODAL.querySelector('.model-modal-body').innerHTML = '';
+  if (MODAL_SCROLL) {
+    document.documentElement.style.overflow = MODAL_SCROLL[0];
+    document.body.style.overflow = MODAL_SCROLL[1];
+    MODAL_SCROLL = null;
+  }
+  if (!fromHistory) {
+    if (MODAL_PUSHED) { MODAL_PUSHED = false; history.back(); }
+    else {
+      try { history.replaceState(null, '', location.pathname + location.search); } catch (err) {}
+    }
+  }
+}
+
+function initModelModal() {
+  document.addEventListener('click', function (e) {
+    var tile = e.target.closest ? e.target.closest('.model-tile') : null;
+    if (!tile) return;
+    var key = tile.getAttribute('data-key');
+    if (!MODEL_INDEX[key]) return;
+    e.preventDefault();
+    openModel(key, true);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' || e.keyCode === 27) closeModel();
+  });
+
+  window.addEventListener('popstate', function () {
+    var key = (location.hash || '').replace(/^#/, '');
+    MODAL_PUSHED = false;
+    if (MODEL_INDEX[key]) openModel(key, false);
+    else closeModel(true);
+  });
+
+  var start = (location.hash || '').replace(/^#/, '');
+  if (MODEL_INDEX[start]) openModel(start, false);
 }
 
 /* ---------- покрытия ---------- */
@@ -125,24 +291,4 @@ function renderCoatings(elId, coatings) {
       });
     });
   });
-}
-
-/* ---------- сайдинг для ограждений ---------- */
-function renderFence(elId, slugs, all) {
-  var el = document.getElementById(elId);
-  if (!el) return;
-  var byslug = {};
-  all.forEach(function (m) { byslug[m.slug] = m; });
-  el.innerHTML = slugs.map(function (s) {
-    var m = byslug[s];
-    if (!m) return '';
-    return '<a href="#siding-' + m.slug + '" class="series-card">' +
-      '<div class="img-wrap">' +
-        '<span class="fs-badge">Fort Steel</span>' +
-        '<img src="' + m.hero + '" alt="' + esc(m.name) + '" loading="lazy">' +
-      '</div>' +
-      '<div class="body"><h3>' + esc(m.name) + '</h3>' +
-      '<p>Применяется и как фасадный сайдинг, и для заполнения секций забора.</p>' +
-      '<div class="meta">' + priceHtml(m) + '</div></div></a>';
-  }).join('');
 }
