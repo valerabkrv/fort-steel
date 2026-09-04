@@ -1,6 +1,7 @@
-<!-- Fort Steel | код для блока T123 (HTML-код) в Tilda
-     Картинки, данные и скрипт каталога берутся с https://valerabkrv.github.io/fort-steel/
-     Стили вшиты в блок и ограничены классом .fs -->
+<!-- Код для блока T123 (HTML-код) в Tilda.
+     Картинки и видео: https://valerabkrv.github.io/fort-steel/
+     Чтобы держать их в Тильде: Настройки сайта -> Файлы,
+     затем заменить этот адрес на выданный Тильдой. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;800&subset=cyrillic&display=swap" rel="stylesheet">
 <style>
@@ -101,17 +102,26 @@ body{margin: 0;
   object-fit: cover;
   object-position: 60% 45%;}
 .fs .hero-v2-logo{position: absolute;
-  top: 190px;
-  right: 40px;
+  top: 30px;
+  left: 30px;
   z-index: 3;
-  display: block;}
-.fs .hero-v2-logo img{height: 140px;
+  display: block;
+  padding: 20px 30px 22px;}
+.fs .hero-v2-logo::before{content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  background: linear-gradient(125deg, rgba(10,12,15,0.8) 0%, rgba(10,12,15,0.62) 100%);
+  z-index: 0;}
+.fs .hero-v2-logo img{position: relative;
+  z-index: 1;
+  height: 130px;
   width: auto;
   display: block;
-  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.45));}
+  filter: drop-shadow(0 2px 10px rgba(0,0,0,0.7));}
 @media (max-width: 860px){
-.fs .hero-v2-logo{top: 110px; right: 16px;}
-.fs .hero-v2-logo img{height: 70px;}
+.fs .hero-v2-logo{top: 14px; left: 14px; padding: 12px 17px 13px;}
+.fs .hero-v2-logo img{height: 62px;}
 }
 .fs .hero-v2-inner{position: relative;
   z-index: 2;
@@ -206,29 +216,6 @@ body{margin: 0;
   font-size: 16px;
   margin: 0 0 34px;
   max-width: 640px;}
-.fs .series-grid{display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 22px;}
-.fs .series-card{border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: var(--panel);
-  box-shadow: 0 2px 10px rgba(32,36,41,0.06);
-  transition: box-shadow .15s, transform .15s, border-color .15s;
-  display: flex;
-  flex-direction: column;}
-.fs .series-card:hover{box-shadow: 0 10px 30px rgba(32,36,41,0.14);
-  border-color: var(--gold);
-  transform: translateY(-2px);
-  text-decoration: none;}
-.fs .series-card .img-wrap{position: relative;
-  aspect-ratio: 1 / 1;
-  background: var(--media-bg-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 18px;}
-.fs .series-card .img-wrap img{max-height: 100%;}
 .fs .docke-badge{position: absolute;
   top: 10px;
   left: 10px;
@@ -239,10 +226,6 @@ body{margin: 0;
   padding: 3px 6px;
   box-shadow: 0 1px 5px rgba(0,0,0,0.2);
   z-index: 2;}
-.fs .series-card .body{padding: 18px 20px 22px;}
-.fs .series-card h3{margin: 0 0 6px; font-size: 18px; color: var(--text);}
-.fs .series-card p{margin: 0; color: var(--muted); font-size: 14px;}
-.fs .series-card .price-from{margin-top: 8px; color: var(--gold); font-weight: 700; font-size: 15px;}
 .fs .tag{display: inline-block;
   font-size: 12px;
   font-weight: 700;
@@ -470,21 +453,165 @@ body{margin: 0;
 .fs nav.main-nav{display: none;}
 .fs .hero-text h1{font-size: 28px;}
 }
-.fs .series-card .img-wrap, .fs .collection-hero, .fs .product-card .img-wrap{background: #fff;}
-.fs .series-card .img-wrap{aspect-ratio: 4 / 3; padding: 0; display: block; overflow: hidden;}
-.fs .series-card .img-wrap img{position: absolute; top: 0; left: 0;
-  width: 100%; height: 100%; object-fit: cover; max-height: none;}
+.fs .collection-hero, .fs .product-card .img-wrap{background: #fff;}
 .fs .product-card .img-wrap{aspect-ratio: 4 / 3; overflow: hidden; position: relative; display: block;}
 .fs .product-card .img-wrap img{position: absolute; top: 0; left: 0;
   width: 100%; height: 100%; object-fit: cover; border-radius: 6px;}
-.fs .series-card .meta{display: flex;
+.fs .model-grid{display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;}
+@media (max-width: 1080px){
+.fs .model-grid{grid-template-columns: repeat(3, minmax(0, 1fr));} }
+@media (max-width: 820px){
+.fs .model-grid{grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;} }
+@media (max-width: 420px){
+.fs .model-grid{gap: 10px;} }
+.fs .model-tile{display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--panel);
+  box-shadow: 0 2px 10px rgba(32,36,41,0.06);
+  color: var(--text);
+  cursor: pointer;
+  transition: box-shadow .15s, transform .15s, border-color .15s;}
+.fs .model-tile:hover{box-shadow: 0 10px 30px rgba(32,36,41,0.16);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+  text-decoration: none;}
+.fs .model-tile-media{position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  background: #fff;
+  overflow: hidden;}
+.fs .model-tile-media img{position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;}
+.fs .model-tile-hint{position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 26px 12px 9px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(to top, rgba(14,16,19,0.8), rgba(14,16,19,0));
+  opacity: 0;
+  transition: opacity .15s;}
+.fs .model-tile:hover .model-tile-hint{opacity: 1;}
+.fs .model-tile-body{display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 14px 16px 16px;}
+.fs .model-tile-name{display: block;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 5px;
+  color: var(--text);}
+.fs .model-tile-short{display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);}
+.fs .model-tile-meta{display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 10px;
-  margin-top: 10px;}
-.fs .series-card .meta .price{color: var(--gold); font-weight: 800; font-size: 16px; white-space: nowrap;}
-.fs .series-card .meta .price small{font-weight: 600; font-size: 12px; color: var(--muted);}
-.fs .series-card .meta .width{color: var(--muted-2); font-size: 12px;}
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 12px;}
+.fs .model-tile-meta .price{color: var(--gold); font-weight: 800; font-size: 16px; white-space: nowrap;}
+.fs .model-tile-meta .price small{font-weight: 600; font-size: 12px; color: var(--muted);}
+.fs .model-tile-meta .width{color: var(--muted-2); font-size: 12px; white-space: nowrap;}
+@media (max-width: 820px){
+.fs .model-tile-body{padding: 12px 13px 14px;}
+.fs .model-tile-name{font-size: 15px;}
+.fs .model-tile-meta .price{font-size: 15px;}
+}
+@media (max-width: 420px){
+.fs .model-tile-body{padding: 10px 11px 12px;}
+.fs .model-tile-name{font-size: 14px;}
+.fs .model-tile-short{-webkit-line-clamp: 3; font-size: 12px;}
+.fs .model-tile-meta{padding-top: 9px; flex-wrap: wrap; gap: 2px 8px;}
+.fs .model-tile-meta .price{font-size: 14px;}
+}
+.fs .model-modal{position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+  display: none;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;}
+.fs .model-modal.is-open{display: block;}
+.fs .model-modal-backdrop{position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(18,20,24,0.62);}
+.fs .model-modal-dialog{position: relative;
+  width: calc(100% - 40px);
+  max-width: 980px;
+  margin: 40px auto;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 30px 90px rgba(0,0,0,0.4);
+  padding: 28px;}
+.fs .model-modal .collection-head{margin-bottom: 0;}
+.fs .model-modal .collection-title-row{padding-right: 44px;}
+.fs .model-modal-close{position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--panel);
+  color: var(--text);
+  font-size: 24px;
+  line-height: 1;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;}
+.fs .model-modal-close:hover{background: var(--gold); border-color: var(--gold); color: #fff;}
+.fs .model-thumbs{display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  width: 100%;}
+.fs .model-thumb{position: relative;
+  aspect-ratio: 4 / 3;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: border-color .15s;}
+.fs .model-thumb img{width: 100%; height: 100%; object-fit: cover;}
+.fs .model-thumb:hover{border-color: var(--gold);}
+.fs .model-thumb.is-active{border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold);}
+@media (max-width: 640px){
+.fs .model-modal-dialog{width: calc(100% - 20px); margin: 12px auto; padding: 18px;}
+.fs .model-modal .collection-title-row{padding-right: 40px;}
+.fs .model-thumbs{grid-template-columns: repeat(4, 1fr);}
+}
 .fs .fs-badge{position: absolute;
   top: 10px;
   left: 10px;
@@ -602,7 +729,7 @@ body{margin: 0;
 </header>
 
 <section class="hero-v2" id="top">
-  <img class="hero-v2-bg" src="https://valerabkrv.github.io/fort-steel/assets/images/hero/hero-house.jpg" alt="Дом, облицованный металлическим сайдингом Fort Steel под бревно">
+  <img class="hero-v2-bg" src="https://valerabkrv.github.io/fort-steel/assets/images/hero/hero-graphite.jpg" alt="Дом в стиле барнхаус, облицованный металлическим сайдингом Fort Steel графитового цвета">
   <div class="hero-v2-logo">
     <img src="https://valerabkrv.github.io/fort-steel/assets/images/logo-krasiviydom-white.png" alt="Красивый дом — Кровли, Фасады">
   </div>
@@ -635,23 +762,20 @@ body{margin: 0;
 <section>
   <div class="container">
     <h2 class="section-title">Каталог Fort Steel</h2>
-    <p class="section-sub">28 позиций в шести направлениях: фасадный сайдинг под дерево, софиты, линеарные панели, профнастил, подсистема и доборные элементы.</p>
+    <p class="section-sub">24 позиции в трёх направлениях: фасадный сайдинг под дерево, софиты и профнастил.</p>
 
     <div class="quick-nav">
       <a href="#coatings">Покрытия и цвета</a>
       <a href="#siding">Металлический сайдинг · 15</a>
       <a href="#soffit">Софиты · 6</a>
-      <a href="#linear">Линеарные панели · 2</a>
       <a href="#profile">Профнастил · 3</a>
-      <a href="#fence">Сайдинг для ограждений</a>
-      <a href="#extra">Подсистема и доборные</a>
     </div>
 
     <div class="spec-grid" style="margin-top:0">
       <div class="spec-item"><div class="val">50 лет</div><div class="lbl">Срок службы без изменения свойств</div></div>
       <div class="spec-item"><div class="val">−50…+80 °C</div><div class="lbl">Температурный диапазон применения</div></div>
-      <div class="spec-item"><div class="val">28</div><div class="lbl">Моделей и типоразмеров</div></div>
-      <div class="spec-item"><div class="val">20</div><div class="lbl">Рисунков и цветов покрытия</div></div>
+      <div class="spec-item"><div class="val">24</div><div class="lbl">Моделей и типоразмеров</div></div>
+      <div class="spec-item"><div class="val">36</div><div class="lbl">Рисунок и цвет покрытия</div></div>
     </div>
   </div>
 </section>
@@ -660,7 +784,7 @@ body{margin: 0;
   <div class="container">
     <div><span class="tag">Линейки покрытий</span></div>
     <h2 class="section-title">Покрытия Fort Steel</h2>
-    <p class="section-sub">Любую модель сайдинга можно заказать в двух линейках покрытия: Printech — фото-офсетные рисунки древесины, «Стальной бархат» — матовые текстурированные RAL. Цвета на экране монитора могут отличаться от фактических.</p>
+    <p class="section-sub">Любую модель сайдинга можно заказать в трёх линейках покрытия: Printech — фото-офсетные рисунки древесины, «Стальной бархат» — матовые текстурированные RAL, «Полиэстер RAL» — классическая глянцевая эмаль в 16 цветах. Цвета на экране монитора могут отличаться от фактических.</p>
     <div id="coatings-blocks"></div>
   </div>
 </section>
@@ -669,13 +793,9 @@ body{margin: 0;
   <div class="container">
     <div><span class="tag">Основная линейка</span></div>
     <h2 class="section-title">Металлический сайдинг</h2>
-    <p class="section-sub">15 профилей из оцинкованной стали: бревно, клеёный брус, финская и корабельная доска. Длина панели — до 6 м, возможно изготовление по размерам заказчика; доборные элементы длиной до 3,8 м.</p>
+    <p class="section-sub">15 профилей из оцинкованной стали: бревно, клеёный брус, финская и корабельная доска. Длина панели — до 6 м, возможно изготовление по размерам заказчика; доборные элементы длиной до 3,8 м. Нажмите на модель — откроется описание, характеристики и фотографии.</p>
 
-    <h3 class="section-title" style="font-size:22px">Модели сайдинга</h3>
-    <p class="section-sub" style="margin-bottom:14px">Выберите модель — ниже откроется её описание и характеристики.</p>
-    <div class="series-grid" id="siding-grid" style="margin-bottom:26px"></div>
-
-    <div id="siding-blocks"></div>
+    <div class="model-grid" id="siding-grid"></div>
   </div>
 </section>
 
@@ -685,52 +805,21 @@ body{margin: 0;
     <h2 class="section-title">Софиты</h2>
     <p class="section-sub">Тройной металлический софит из оцинкованной стали с полимерным покрытием «Полиэстер». Сплошной — для потолков веранд, террас и беседок; с центральной перфорацией — для проветривания подкровельного пространства.</p>
 
-    <div class="series-grid" id="soffit-grid" style="margin-bottom:26px"></div>
-    <div id="soffit-blocks"></div>
+    <div class="model-grid" id="soffit-grid"></div>
   </div>
 </section>
 
-<section id="linear">
-  <div class="container">
-    <div><span class="tag">Вентфасад</span></div>
-    <h2 class="section-title">Линеарные панели</h2>
-    <p class="section-sub">Панели для вентилируемых фасадов административных, торговых, складских и спортивных зданий. Монтаж в любом направлении — горизонтально, вертикально и по наклонным плоскостям.</p>
-
-    <div class="series-grid" id="linear-grid" style="margin-bottom:26px"></div>
-    <div id="linear-blocks"></div>
-  </div>
-</section>
-
-<section class="alt" id="profile">
+<section id="profile">
   <div class="container">
     <div><span class="tag">Заборы и стены</span></div>
     <h2 class="section-title">Профнастил</h2>
     <p class="section-sub">Запатентованные профили Fort Steel с увеличенной рабочей шириной: «Мослим» С-21 (до 8 м) и FS10 (до 6 м). Применяются для ограждений и для облицовки зданий.</p>
 
-    <div class="series-grid" id="profile-grid" style="margin-bottom:26px"></div>
-    <div id="profile-blocks"></div>
+    <div class="model-grid" id="profile-grid"></div>
   </div>
 </section>
 
-<section id="fence">
-  <div class="container">
-    <h2 class="section-title">Сайдинг для ограждений</h2>
-    <p class="section-sub">Эти модели чаще всего берут для заполнения секций забора: жёсткая панель, аккуратный замок и тот же рисунок дерева, что и на фасаде дома — забор и дом получаются в одном стиле.</p>
-    <div class="series-grid" id="fence-grid"></div>
-  </div>
-</section>
-
-<section class="alt" id="extra">
-  <div class="container">
-    <h2 class="section-title">Подсистема и доборные элементы</h2>
-    <p class="section-sub">Шляпный профиль для обрешётки под сайдинг, кассеты и софиты, а также стыковочные планки. Полный перечень доборных элементов — по запросу у менеджера.</p>
-
-    <div class="series-grid" id="extra-grid" style="margin-bottom:26px"></div>
-    <div id="extra-blocks"></div>
-  </div>
-</section>
-
-<section>
+<section class="alt">
   <div class="container">
     <h2 class="section-title">Почему выбирают Красивый дом</h2>
     <p class="section-sub">Металлический сайдинг Fort Steel — фасад с рисунком дерева, которому не нужны пропитки, покраска и ежегодный уход.</p>
@@ -836,7 +925,7 @@ body{margin: 0;
   </div>
 </footer>
 
-<script src="https://valerabkrv.github.io/fort-steel/assets/data.js?v=1"></script>
+<script src="https://valerabkrv.github.io/fort-steel/assets/data.js?v=3"></script>
 <script>
 (function(){
   var B="https://valerabkrv.github.io/fort-steel/";
@@ -850,14 +939,62 @@ body{margin: 0;
     .forEach(function(n){ if (window[n]) window[n] = fix(window[n]); });
 })();
 </script>
-<script src="https://valerabkrv.github.io/fort-steel/assets/site.js?v=1"></script>
+<script src="https://valerabkrv.github.io/fort-steel/assets/site.js?v=4"></script>
 <script>
+/* ==================================================================
+   Ц Е Н Ы   —   м е н я ю т с я   з д е с ь
+
+   Правьте только число в кавычках справа: было "890" — стало "950".
+   Всё остальное в строке (название слева, двоеточие, запятая в конце)
+   не трогайте.
+
+   Пустые кавычки ""  — на карточке вместо цены будет «Цена по запросу».
+   Цена показывается как «от <число> ₽/м²».
+   После правки: «Сохранить и закрыть» -> «Опубликовать».
+   ================================================================== */
+var FS_PRICE_UNIT = '₽/м²';
+
+var FS_PRICES = {
+
+  /* ---------- Металлический сайдинг ---------- */
+  'Венец':                                           '890',
+  'Одноволновый венец':                              '890',
+  'Строганный одноволновый венец':                   '890',
+  'Металлическая пакля':                             '90',
+  'Евробрус с тиснением':                            '780',
+  'Одноволновый евробрус с тиснением':               '890',
+  'Одноволновый евробрус с рифлением':               '890',
+  'Одноволновый евробрус с перфорацией и рифлением': '890',
+  'Скандинавский брус с тиснением':                  '890',
+  'Скандинавский брус с фактурой':                   '890',
+  'Финская доска узкая с тиснением':                 '890',
+  'Финская доска широкая с тиснением':               '890',
+  'Финская доска широкая с фактурой':                '890',
+  'Одноволновая корабельная доска с тиснением':      '890',
+  'Одноволновая корабельная доска с фактурой':       '890',
+
+  /* ---------- Софиты ---------- */
+  'Тройной софит, центральная перфорация':            '780',
+  'Тройной софит с рифлением':                        '780',
+  'Тройной софит гладкий PREMIUM 8017':               '780',
+  'Тройной софит гладкий с перфорацией PREMIUM 8017': '780',
+  'Тройной софит гладкий PREMIUM 7024':               '780',
+  'Тройной софит гладкий с перфорацией PREMIUM 7024': '780',
+
+  /* ---------- Профнастил ---------- */
+  'Профнастил «Мослим» PREMIUM': '560',
+  'Профнастил FS10':             '550',
+  'Профнастил FS10 «Naive 014»': '850'
+};
+/* ================ конец блока цен ================================= */
+
+if (typeof applyPrices === 'function') {
+  applyPrices(FS_PRICES, FS_PRICE_UNIT, [MODELS_SIDING, MODELS_SOFFIT, MODELS_PROFILE]);
+}
 renderCoatings('coatings-blocks', COATINGS);
 renderModels('siding', MODELS_SIDING, 'Металлический сайдинг');
 renderModels('soffit', MODELS_SOFFIT, 'Софиты');
-renderModels('linear', MODELS_LINEAR, 'Линеарные панели');
 renderModels('profile', MODELS_PROFILE, 'Профнастил');
-renderModels('extra', MODELS_EXTRA, 'Подсистема и доборные');
-renderFence('fence-grid', FENCE_SLUGS, MODELS_SIDING);
+initModelModal();
 </script>
 </div>
