@@ -225,8 +225,8 @@
   </div>
 </footer>
 
-<script src="assets/data.js?v=5"></script>
-<script src="assets/site.js?v=4"></script>
+<script src="assets/data.js?v=6"></script>
+<script src="assets/site.js?v=5"></script>
 <script>
 /* ==================================================================
    Ц Е Н Ы   —   м е н я ю т с я   з д е с ь
@@ -237,9 +237,16 @@
 
    Пустые кавычки ""  — на карточке вместо цены будет «Цена по запросу».
    Цена показывается как «от <число> ₽/м²».
+   Исключения по единице измерения — в списке FS_PRICE_UNITS ниже.
    После правки: «Сохранить и закрыть» -> «Опубликовать».
    ================================================================== */
 var FS_PRICE_UNIT = '₽/м²';
+
+/* Модели, которые считаются не за квадратный метр.
+   Слева название модели, справа единица измерения. */
+var FS_PRICE_UNITS = {
+  'Металлическая пакля': '₽/м.п.'
+};
 
 var FS_PRICES = {
 
@@ -276,7 +283,7 @@ var FS_PRICES = {
 /* ================ конец блока цен ================================= */
 
 if (typeof applyPrices === 'function') {
-  applyPrices(FS_PRICES, FS_PRICE_UNIT, [MODELS_SIDING, MODELS_SOFFIT, MODELS_PROFILE]);
+  applyPrices(FS_PRICES, FS_PRICE_UNIT, [MODELS_SIDING, MODELS_SOFFIT, MODELS_PROFILE], FS_PRICE_UNITS);
 }
 renderCoatings('coatings-blocks', COATINGS);
 renderModels('siding', MODELS_SIDING, 'Металлический сайдинг');
