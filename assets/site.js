@@ -13,15 +13,18 @@ function priceHtml(m) {
 /* Цены из блока T123 (FS_PRICES) перекрывают цены из data.js.
    Ключ — точное название модели; неизвестные ключи не молчат, а пишут
    предупреждение в консоль, иначе опечатку в названии не заметить. */
-function applyPrices(map, unit, lists) {
+function applyPrices(map, unit, lists, units) {
   if (!map) return;
+  units = units || {};
   var known = {};
   lists.forEach(function (list) {
     (list || []).forEach(function (m) {
       known[m.name] = true;
       if (Object.prototype.hasOwnProperty.call(map, m.name)) {
         m.price = String(map[m.name]).trim();
-        if (unit) m.unit = unit;
+        /* у модели может быть своя единица (пог. м вместо м²) */
+        var u = units[m.name] || unit;
+        if (u) m.unit = u;
       }
     });
   });
